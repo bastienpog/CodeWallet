@@ -1,0 +1,85 @@
+import { useEffect, useRef } from "react";
+import { X } from "lucide-react";
+import hljs from "highlight.js";
+
+interface FragmentModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    code: string;
+    language?: string;
+    onDelete: () => void;
+}
+
+export const FragmentModal: React.FC<FragmentModalProps> = ({
+    isOpen,
+    onClose,
+    code,
+    language,
+    onDelete,
+}) => {
+    const codeRef = useRef<HTMLElement>(null);
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+
+        if (isOpen) {
+            document.addEventListener("keydown", handleEscape);
+            document.body.style.overflow = "hidden";
+
+            if (codeRef.current) {
+                hljs.highlightElement(codeRef.current);
+            }
+        }
+
+        return () => {
+            document.removeEventListener("keydown", handleEscape);
+            document.body.style.overflow = "unset";
+        };
+    }, [isOpen, onClose]);
+
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(code);
+            alert("Code copied!");
+        } catch (err) {
+            alert("Failed to copy code.");
+        }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 bg-black opacity-30" onClick={onClose} />
+
+            <div className="relative z-50 bg-white dark:bg-custom-black rounded-xl w-full max-w-2xl mx-4 p-6">
+                <button onClick={onClose} className="absolute top-4 right-4 text-custom-violet1 hover:text-custom-violet2">
+                    <X size={16} />
+                </button>
+
+                <pre className="overflow-auto max-h-[500px] text-sm bg-white dark:bg-custom-black p-4 rounded-md">
+                    <code ref={codeRef} className={`language-${language}`}>
+                        {code}
+                    </code>
+                </pre>
+
+                <div className="flex justify-between mt-4">
+                    <button
+                        onClick={onDelete}
+                        className="bg-custom-violet1 hover:bg-custom-violet2 text-white py-1.5 px-4 rounded-full"
+                    >
+                        supprimer
+                    </button>
+                    <button
+                        onClick={handleCopy}
+                        className="bg-custom-green hover:bg-green-500 text-white py-1.5 px-4 rounded-full"
+                    >
+                        copier
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
