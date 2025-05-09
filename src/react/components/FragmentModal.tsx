@@ -18,6 +18,24 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
     onDelete,
 }) => {
     const codeRef = useRef<HTMLElement>(null);
+
+    const switchHighlightTheme = (theme: "light" | "dark") => {
+        const existing = document.getElementById("hljs-theme") as HTMLLinkElement | null;
+        const href = theme === "dark"
+            ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
+            : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css";
+
+        if (existing) {
+            existing.href = href;
+        } else {
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.id = "hljs-theme";
+            link.href = href;
+            document.head.appendChild(link);
+        }
+    };
+
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
@@ -26,6 +44,9 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
         if (isOpen) {
             document.addEventListener("keydown", handleEscape);
             document.body.style.overflow = "hidden";
+
+            const isDark = document.documentElement.classList.contains("dark");
+            switchHighlightTheme(isDark ? "dark" : "light");
 
             if (codeRef.current) {
                 hljs.highlightElement(codeRef.current);
