@@ -23,7 +23,6 @@ export const Navbar = () => {
             <div className="flex items-center space-x-6">
                 <Link to={"/test"} className="hover:underline">fragment</Link>
                 <a href="#" className="hover:underline">info</a>
-                <a href="#" className="hover:underline">tags</a>
                 <button
                     onClick={toggle}
                     title="Toggle color scheme"

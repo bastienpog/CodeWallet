@@ -7,6 +7,22 @@ import { FragmentModal } from './components/FragmentModal';
 
 export const App = () => {
 
+  const [snippets, setSnippets] = useState<Snippet[]>([]);
+
+  useEffect(() => {
+    window.SnippetAPI.readSnippet()
+  }, []);
+
+  const addSnippet = (snippet: Snippet) => {
+    const updated = [...snippets, snippet];
+    window.SnippetAPI.writeSnippet(updated)
+  };
+
+  const deleteSnippet = (id: number) => {
+    const updated = snippets.filter((s) => s.id !== id);
+    window.SnippetAPI.writeSnippet(updated)
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState<string>('');
 
