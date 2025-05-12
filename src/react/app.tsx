@@ -10,17 +10,21 @@ export const App = () => {
   const [snippets, setSnippets] = useState<Snippet[]>([]);
 
   useEffect(() => {
-    window.SnippetAPI.readSnippet()
+    const fetchSnippets = async () => {
+      const data = await window.SnippetAPI.readSnippet();
+      setSnippets(data);
+    };
+    fetchSnippets();
   }, []);
 
   const addSnippet = (snippet: Snippet) => {
     const updated = [...snippets, snippet];
-    window.SnippetAPI.writeSnippet(updated)
+    window.SnippetAPI.writeSnippet(updated).then(() => setSnippets(updated));
   };
 
   const deleteSnippet = (id: number) => {
     const updated = snippets.filter((s) => s.id !== id);
-    window.SnippetAPI.writeSnippet(updated)
+    window.SnippetAPI.writeSnippet(updated).then(() => setSnippets(updated));
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +44,7 @@ export const App = () => {
       <div className="min-h-screen bg-white text-black dark:bg-custom-black dark:text-white">
         <Navbar />
         <FragmentButton />
-        <FragmentList onViewCode={handleViewCode} />
+        <FragmentList onViewCode={handleViewCode} snippets={snippets} />
         <FragmentModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
