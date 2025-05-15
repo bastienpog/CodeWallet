@@ -4,7 +4,7 @@ import { Routes } from "react-router-dom";
 import { Route } from "react-router-dom";
 import { StrictMode } from "react";
 import { App } from "./app";
-import { Info } from "./Info";
+import { CodeForm } from "./pages/Form";
 import "./index.css";
 
 const root = createRoot(document.body);
@@ -13,7 +13,7 @@ root.render(
         <HashRouter>
             <Routes>
                 <Route index element={<App />}></Route>
-                <Route element={<Info />} path="/info"></Route>
+                <Route element={<CodeForm />} path="/form"></Route>
             </Routes>
         </HashRouter>
     </StrictMode>

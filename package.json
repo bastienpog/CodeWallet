@@ -38,6 +38,9 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.4",
+    "@uiw/codemirror-extensions-langs": "^4.23.12",
+    "@uiw/codemirror-themes": "^4.23.12",
+    "@uiw/react-codemirror": "^4.23.12",
     "electron-squirrel-startup": "^1.0.1",
     "highlight.js": "^11.11.1",
     "lucide-react": "^0.507.0",
