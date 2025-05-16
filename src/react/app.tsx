@@ -17,11 +17,6 @@ export const App = () => {
     fetchSnippets();
   }, []);
 
-  const deleteSnippet = (id: number) => {
-    const updated = snippets.filter((s) => s.id !== id);
-    window.SnippetAPI.writeSnippet(updated).then(() => setSnippets(updated));
-  };
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState<string>('');
   const [selectedId, setSelectedId] = useState<number>()
@@ -33,8 +28,17 @@ export const App = () => {
     console.log(selectedId)
   };
 
-  const handleDelete = () => {
-    setIsModalOpen(false);
+  const handleDelete = (id: number) => {
+    const confirmed = window.confirm("Voulez-vous vraiment supprimer ce fragment ?");
+    if (!confirmed) return;
+
+    const updatedSnippets = snippets.filter(snippet => snippet.id !== id);
+
+    window.SnippetAPI.writeSnippet(updatedSnippets).then(() => {
+      setSnippets(updatedSnippets);
+      setIsModalOpen(false); // close the modal
+      console.log("Snippet deleted from modal.");
+    });
   };
 
   return (
@@ -48,7 +52,7 @@ export const App = () => {
           onClose={() => setIsModalOpen(false)}
           code={selectedCode}
           id={selectedId}
-          onDelete={handleDelete}
+          onDelete={() => handleDelete(selectedId)}
           language="javascript"
         />
       </div>
