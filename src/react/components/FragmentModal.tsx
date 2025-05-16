@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { X, Trash2, PencilOff } from "lucide-react";
 import hljs from "highlight.js";
+import { useNavigate } from "react-router-dom";
 
 interface FragmentModalProps {
     isOpen: boolean;
     onClose: () => void;
     code: string;
+    id: number;
     language?: string;
     onDelete: () => void;
 }
@@ -14,10 +16,13 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
     isOpen,
     onClose,
     code,
+    id,
     language,
     onDelete,
 }) => {
+
     const codeRef = useRef<HTMLElement>(null);
+    const navigate = useNavigate()
 
     const switchHighlightTheme = (theme: "light" | "dark") => {
         const existing = document.getElementById("hljs-theme") as HTMLLinkElement | null;
@@ -69,6 +74,10 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
         }
     };
 
+    const handleEdit = (id: number) => {
+        navigate(`/edit/${id}`);
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -87,12 +96,17 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
                 </pre>
 
                 <div className="flex justify-between mt-4">
-                    <button
-                        onClick={onDelete}
-                        className="bg-custom-violet1 hover:bg-custom-violet2 text-white py-1.5 px-4 rounded-full"
-                    >
-                        supprimer
-                    </button>
+                    <div className="space-x-1">
+                        <button
+                            onClick={onDelete}
+                            className="bg-custom-violet1 hover:bg-custom-violet2 text-white py-1.5 px-4 rounded-full"
+                        >
+                            <Trash2 />
+                        </button>
+                        <button onClick={() => handleEdit(id)} className="bg-custom-violet1 hover:bg-custom-violet2 text-white py-1.5 px-4 rounded-full">
+                            <PencilOff />
+                        </button>
+                    </div>
                     <button
                         onClick={handleCopy}
                         className="bg-custom-green hover:bg-green-500 text-white py-1.5 px-4 rounded-full"

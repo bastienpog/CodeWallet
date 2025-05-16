@@ -1,7 +1,7 @@
 import { FragmentCard } from './FragmentCard';
 interface FragmentListProps {
     snippets: Snippet[];
-    onViewCode: (code: string) => void;
+    onViewCode: (code: string, id: Number) => void;
 }
 
 export const FragmentList = ({ snippets, onViewCode }: FragmentListProps) => {
@@ -13,7 +13,7 @@ export const FragmentList = ({ snippets, onViewCode }: FragmentListProps) => {
                     title={snippet.title}
                     language={snippet.language}
                     tags={snippet.tags}
-                    onViewCode={() => onViewCode(snippet.code)}
+                    onViewCode={() => onViewCode(snippet.code, snippet.id)}
                 />
             ))}
         </div>

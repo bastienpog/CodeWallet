@@ -5,6 +5,7 @@ import { TagsInput } from '../components/TagsInput';
 import { CodeEditor } from '../components/CodeEditor';
 import { Navbar } from '../components/Navbar';
 import { CustomThemeProvider } from '../components/ThemeProvider';
+import { useParams } from 'react-router-dom';
 
 interface FormData {
     title: string;
@@ -19,13 +20,27 @@ interface Snippet extends FormData {
 
 export const CodeForm: React.FC = () => {
 
+    const { id } = useParams();
+    const isEditMode = Boolean(id);
+
     const [snippets, setSnippets] = useState<Snippet[]>([]);
     useEffect(() => {
         window.SnippetAPI.readSnippet().then((data: Snippet[]) => {
-            console.log("Snippets loaded:", data);
             setSnippets(data);
+
+            if (isEditMode) {
+                const snippetToEdit = data.find(s => s.id === Number(id));
+                if (snippetToEdit) {
+                    setFormData({
+                        title: snippetToEdit.title,
+                        language: snippetToEdit.language,
+                        tags: snippetToEdit.tags,
+                        code: snippetToEdit.code,
+                    });
+                }
+            }
         });
-    }, []);
+    }, [id]);
 
     const [formData, setFormData] = useState<FormData>({
         title: '',
@@ -61,21 +76,32 @@ export const CodeForm: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const newSnippet: Snippet = {
-            id: Date.now(),
-            title: formData.title,
-            language: formData.language,
-            tags: formData.tags,
-            code: formData.code,
-        };
+        if (isEditMode) {
+            const updatedSnippets = snippets.map((snippet) =>
+                snippet.id === Number(id)
+                    ? { ...snippet, ...formData, id: Number(id) }
+                    : snippet
+            );
 
-        const updatedSnippets = [...snippets, newSnippet];
+            window.SnippetAPI.writeSnippet(updatedSnippets).then(() => {
+                setSnippets(updatedSnippets);
+                console.log("Snippet updated!");
+                handleReset();
+            });
+        } else {
+            const newSnippet: Snippet = {
+                id: Date.now(),
+                ...formData,
+            };
 
-        window.SnippetAPI.writeSnippet(updatedSnippets).then(() => {
-            setSnippets(updatedSnippets);
-            console.log("Snippet written!");
-            handleReset(); // Optional: clear form after save
-        });
+            const updatedSnippets = [...snippets, newSnippet];
+
+            window.SnippetAPI.writeSnippet(updatedSnippets).then(() => {
+                setSnippets(updatedSnippets);
+                console.log("Snippet created!");
+                handleReset();
+            });
+        }
     };
 
     const handleReset = () => {

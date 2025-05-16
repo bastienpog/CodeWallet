@@ -17,11 +17,6 @@ export const App = () => {
     fetchSnippets();
   }, []);
 
-  const addSnippet = (snippet: Snippet) => {
-    const updated = [...snippets, snippet];
-    window.SnippetAPI.writeSnippet(updated).then(() => setSnippets(updated));
-  };
-
   const deleteSnippet = (id: number) => {
     const updated = snippets.filter((s) => s.id !== id);
     window.SnippetAPI.writeSnippet(updated).then(() => setSnippets(updated));
@@ -29,10 +24,13 @@ export const App = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState<string>('');
+  const [selectedId, setSelectedId] = useState<number>()
 
-  const handleViewCode = (code: string) => {
+  const handleViewCode = (code: string, id: number) => {
     setSelectedCode(code);
+    setSelectedId(id)
     setIsModalOpen(true);
+    console.log(selectedId)
   };
 
   const handleDelete = () => {
@@ -49,6 +47,7 @@ export const App = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           code={selectedCode}
+          id={selectedId}
           onDelete={handleDelete}
           language="javascript"
         />

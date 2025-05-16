@@ -14,6 +14,7 @@ root.render(
             <Routes>
                 <Route index element={<App />}></Route>
                 <Route element={<CodeForm />} path="/form"></Route>
+                <Route element={<CodeForm />} path="/edit/:id" />
             </Routes>
         </HashRouter>
     </StrictMode>
