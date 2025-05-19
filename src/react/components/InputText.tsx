@@ -15,6 +15,7 @@ export const InputText: React.FC<InputTextProps> = ({ label, name, value, onChan
             id={name}
             name={name}
             value={value}
+            required
             onChange={onChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline border-custom-violet2"
         />

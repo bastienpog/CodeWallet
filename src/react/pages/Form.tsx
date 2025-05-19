@@ -6,6 +6,7 @@ import { CodeEditor } from '../components/CodeEditor';
 import { Navbar } from '../components/Navbar';
 import { CustomThemeProvider } from '../components/ThemeProvider';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface FormData {
     title: string;
@@ -20,6 +21,7 @@ interface Snippet extends FormData {
 
 export const CodeForm: React.FC = () => {
 
+    const navigate = useNavigate()
     const { id } = useParams();
     const isEditMode = Boolean(id);
 
@@ -100,6 +102,7 @@ export const CodeForm: React.FC = () => {
                 setSnippets(updatedSnippets);
                 console.log("Snippet created!");
                 handleReset();
+                navigate('/')
             });
         }
     };
