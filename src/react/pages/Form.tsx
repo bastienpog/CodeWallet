@@ -24,8 +24,16 @@ export const CodeForm: React.FC = () => {
     const navigate = useNavigate()
     const { id } = useParams();
     const isEditMode = Boolean(id);
+    const [originalData, setOriginalData] = useState<FormData | null>(null);
+    const [formData, setFormData] = useState<FormData>({
+        title: '',
+        language: '',
+        tags: [],
+        code: '',
+    });
 
     const [snippets, setSnippets] = useState<Snippet[]>([]);
+
     useEffect(() => {
         window.SnippetAPI.readSnippet().then((data: Snippet[]) => {
             setSnippets(data);
@@ -33,23 +41,18 @@ export const CodeForm: React.FC = () => {
             if (isEditMode) {
                 const snippetToEdit = data.find(s => s.id === Number(id));
                 if (snippetToEdit) {
-                    setFormData({
+                    const snippetData = {
                         title: snippetToEdit.title,
                         language: snippetToEdit.language,
                         tags: snippetToEdit.tags,
                         code: snippetToEdit.code,
-                    });
+                    };
+                    setFormData(snippetData);
+                    setOriginalData(snippetData);
                 }
-            }
+            };
         });
     }, [id]);
-
-    const [formData, setFormData] = useState<FormData>({
-        title: '',
-        language: '',
-        tags: [],
-        code: '',
-    });
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -107,13 +110,35 @@ export const CodeForm: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            const isSaveShortcut = (isMac && e.metaKey && e.key === 's') || (!isMac && e.ctrlKey && e.key === 's');
+
+            if (isSaveShortcut) {
+                e.preventDefault();
+                handleSubmit(new Event('submit') as any);
+                navigate('/')
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [formData, snippets]);
+
     const handleReset = () => {
-        setFormData({
-            title: '',
-            language: '',
-            tags: [],
-            code: '',
-        });
+        if (isEditMode && originalData) {
+            setFormData(originalData);
+        } else {
+            setFormData({
+                title: '',
+                language: '',
+                tags: [],
+                code: '',
+            });
+        }
     };
 
     const languages = [
@@ -182,7 +207,7 @@ export const CodeForm: React.FC = () => {
                             onClick={handleReset}
                             className="bg-custom-violet1 hover:bg-custom-violet2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
-                            Supprimer
+                            Réinitialiser
                         </button>
                         <button
                             type="submit"
