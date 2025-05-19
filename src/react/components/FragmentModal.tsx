@@ -42,12 +42,18 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
     };
 
     useEffect(() => {
-        const handleEscape = (e: KeyboardEvent) => {
+        const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
+
+            if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+                e.preventDefault();
+                handleCopy();
+            }
         };
 
+
         if (isOpen) {
-            document.addEventListener("keydown", handleEscape);
+            document.addEventListener("keydown", handleKeyDown);
             document.body.style.overflow = "hidden";
 
             const isDark = document.documentElement.classList.contains("dark");
@@ -59,7 +65,7 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
         }
 
         return () => {
-            document.removeEventListener("keydown", handleEscape);
+            document.removeEventListener("keydown", handleKeyDown);
             document.body.style.overflow = "unset";
         };
     }, [isOpen, onClose]);
