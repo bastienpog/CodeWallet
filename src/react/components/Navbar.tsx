@@ -6,7 +6,7 @@ export const Navbar = () => {
     const { theme, toggle } = useCustomTheme();
 
     return (
-        <div className="flex items-center justify-between p-4 border-b border-purple-500 bg-white text-black dark:bg-custom-black dark:text-white">
+        <div className="flex items-center justify-between sticky top-0 p-4 border-b border-purple-500 bg-white text-black dark:bg-custom-black dark:text-white">
             <div className='flex items-center'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="104" height="48" viewBox="0 0 52 24" fill="none" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="48" height="20" x="2" y="2" rx="2" stroke="#9A48D0" strokeWidth="2" />
@@ -22,7 +22,7 @@ export const Navbar = () => {
             </div>
             <div className="flex items-center space-x-6">
                 <Link to={"/"} className="hover:underline">fragment</Link>
-                <a href="#" className="hover:underline">info</a>
+                <Link to={"/info"} className="hover:underline">info</Link>
                 <button
                     onClick={toggle}
                     title="Toggle color scheme"
