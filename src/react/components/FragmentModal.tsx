@@ -71,9 +71,10 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
     }, [isOpen, onClose]);
 
 
-    const handleCopy = async () => {
+    const handleCopy = () => {
         try {
-            await navigator.clipboard.writeText(code);
+            navigator.clipboard.writeText(code);
+            console.log(code)
             alert("Code copied!");
         } catch (err) {
             alert("Failed to copy code.");
