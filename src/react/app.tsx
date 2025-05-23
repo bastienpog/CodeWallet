@@ -7,9 +7,10 @@ import { FragmentModal } from './components/FragmentModal';
 
 export const App = () => {
 
-  const [snippets, setSnippets] = useState<Snippet[]>([]);
+  const [snippets, setSnippets] = useState<Snippet[]>([]); // Liste des snippets
 
   useEffect(() => {
+    // Chargement des snippets au lancement
     const fetchSnippets = async () => {
       const data = await window.SnippetAPI.readSnippet();
       setSnippets(data);
@@ -17,27 +18,25 @@ export const App = () => {
     fetchSnippets();
   }, []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCode, setSelectedCode] = useState<string>('');
-  const [selectedId, setSelectedId] = useState<number>()
+  const [isModalOpen, setIsModalOpen] = useState(false); // État du modal
+  const [selectedCode, setSelectedCode] = useState<string>(''); // Code affiché dans le modal
+  const [selectedId, setSelectedId] = useState<number>(); // ID du snippet sélectionné
 
+  // Ouvre le modal avec le code et l’ID du snippet
   const handleViewCode = (code: string, id: number) => {
     setSelectedCode(code);
-    setSelectedId(id)
+    setSelectedId(id);
     setIsModalOpen(true);
-    console.log(selectedId)
   };
 
+  // Supprime un snippet après confirmation
   const handleDelete = (id: number) => {
-    const confirmed = window.confirm("Voulez-vous vraiment supprimer ce fragment ?");
-    if (!confirmed) return;
+    if (!window.confirm("Voulez-vous vraiment supprimer ce fragment ?")) return;
 
-    const updatedSnippets = snippets.filter(snippet => snippet.id !== id);
-
+    const updatedSnippets = snippets.filter(s => s.id !== id);
     window.SnippetAPI.writeSnippet(updatedSnippets).then(() => {
       setSnippets(updatedSnippets);
-      setIsModalOpen(false); // close the modal
-      console.log("Snippet deleted from modal.");
+      setIsModalOpen(false);
     });
   };
 
@@ -59,5 +58,3 @@ export const App = () => {
     </CustomThemeProvider>
   );
 }
-
-

@@ -9,7 +9,12 @@ interface InputTextProps {
 
 export const InputText: React.FC<InputTextProps> = ({ label, name, value, onChange }) => (
     <div>
-        <label htmlFor={name} className="block text-sm font-bold mb-2">{label}</label>
+        {/* Étiquette du champ */}
+        <label htmlFor={name} className="block text-sm font-bold mb-2">
+            {label}
+        </label>
+
+        {/* Champ de texte contrôlé */}
         <input
             type="text"
             id={name}
@@ -21,4 +26,3 @@ export const InputText: React.FC<InputTextProps> = ({ label, name, value, onChan
         />
     </div>
 );
-

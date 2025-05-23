@@ -21,10 +21,14 @@ interface Snippet extends FormData {
 
 export const CodeForm: React.FC = () => {
 
-    const navigate = useNavigate()
-    const { id } = useParams();
-    const isEditMode = Boolean(id);
+    const navigate = useNavigate();
+    const { id } = useParams(); // récupère l'id du snippet à éditer (si présent)
+    const isEditMode = Boolean(id); // mode édition si id existe
+
+    // données originales chargées (pour reset)
     const [originalData, setOriginalData] = useState<FormData | null>(null);
+
+    // état local du formulaire (titre, langage, tags, code)
     const [formData, setFormData] = useState<FormData>({
         title: '',
         language: '',
@@ -32,13 +36,16 @@ export const CodeForm: React.FC = () => {
         code: '',
     });
 
+    // liste des snippets chargés depuis l'API
     const [snippets, setSnippets] = useState<Snippet[]>([]);
 
+    // au montage, charger les snippets et initialiser le formulaire si en édition
     useEffect(() => {
         window.SnippetAPI.readSnippet().then((data: Snippet[]) => {
             setSnippets(data);
 
             if (isEditMode) {
+                // trouver le snippet à éditer par son id
                 const snippetToEdit = data.find(s => s.id === Number(id));
                 if (snippetToEdit) {
                     const snippetData = {
@@ -48,41 +55,46 @@ export const CodeForm: React.FC = () => {
                         code: snippetToEdit.code,
                     };
                     setFormData(snippetData);
-                    setOriginalData(snippetData);
+                    setOriginalData(snippetData); // sauvegarder pour reset
                 }
             };
         });
     }, [id]);
 
+    // gérer les changements sur les champs texte, select, textarea
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
+        setFormData(prevData => ({
             ...prevData,
             [name]: value,
         }));
     };
 
+    // gérer la modification spécifique du code dans l’éditeur
     const handleCodeChange = (code: string) => {
-        setFormData((prevData) => ({
+        setFormData(prevData => ({
             ...prevData,
             code,
         }));
     };
 
+    // gérer la modification des tags
     const handleTagsChange = (newTags: string[]) => {
-        setFormData((prevData) => ({
+        setFormData(prevData => ({
             ...prevData,
             tags: newTags,
         }));
     };
 
+    // soumission du formulaire (création ou mise à jour)
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (isEditMode) {
-            const updatedSnippets = snippets.map((snippet) =>
+            // mise à jour du snippet existant
+            const updatedSnippets = snippets.map(snippet =>
                 snippet.id === Number(id)
                     ? { ...snippet, ...formData, id: Number(id) }
                     : snippet
@@ -92,8 +104,10 @@ export const CodeForm: React.FC = () => {
                 setSnippets(updatedSnippets);
                 console.log("Snippet updated!");
                 handleReset();
+                navigate('/');
             });
         } else {
+            // création d’un nouveau snippet avec un id timestamp
             const newSnippet: Snippet = {
                 id: Date.now(),
                 ...formData,
@@ -105,11 +119,12 @@ export const CodeForm: React.FC = () => {
                 setSnippets(updatedSnippets);
                 console.log("Snippet created!");
                 handleReset();
-                navigate('/')
+                navigate('/'); // rediriger vers la liste après actualisation
             });
         }
     };
 
+    // écoute les raccourcis clavier Ctrl+S / Cmd+S pour sauvegarder automatiquement
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -118,7 +133,7 @@ export const CodeForm: React.FC = () => {
             if (isSaveShortcut) {
                 e.preventDefault();
                 handleSubmit(new Event('submit') as any);
-                navigate('/')
+                navigate('/');
             }
         };
 
@@ -128,6 +143,7 @@ export const CodeForm: React.FC = () => {
         };
     }, [formData, snippets]);
 
+    // remet le formulaire à ses valeurs initiales ou vides selon le mode
     const handleReset = () => {
         if (isEditMode && originalData) {
             setFormData(originalData);
@@ -141,6 +157,7 @@ export const CodeForm: React.FC = () => {
         }
     };
 
+    // options du select langage
     const languages = [
         { value: '', label: 'Sélectionner le langage' },
         { value: 'javascript', label: 'JavaScript' },
@@ -163,19 +180,21 @@ export const CodeForm: React.FC = () => {
                     onSubmit={handleSubmit}
                     className="m-6 p-6 rounded-md border border-solid border-custom-violet2"
                 >
+                    {/* Titre du snippet */}
                     <div className="mb-4">
                         <InputText
-                            label="Ajouter un titre"
+                            label="Add a title"
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
                         />
                     </div>
 
+                    {/* Langage + Tags côte à côte */}
                     <div className="mb-4 flex space-x-4">
                         <div className="w-1/3">
                             <SelectLanguage
-                                label="Ajouter le langage"
+                                label="Add a language"
                                 name="language"
                                 value={formData.language}
                                 onChange={handleChange}
@@ -184,16 +203,17 @@ export const CodeForm: React.FC = () => {
                         </div>
                         <div className="w-2/3">
                             <TagsInput
-                                label="Ajouter des tags"
+                                label="Add tags"
                                 tags={formData.tags}
                                 onTagsChange={handleTagsChange}
                             />
                         </div>
                     </div>
 
+                    {/* Éditeur de code */}
                     <div className="mb-4">
                         <CodeEditor
-                            label="Ajouter votre fragment"
+                            label="Add your code"
                             name="code"
                             value={formData.code}
                             onChange={handleCodeChange}
@@ -201,19 +221,20 @@ export const CodeForm: React.FC = () => {
                         />
                     </div>
 
+                    {/* Boutons Réinitialiser et Sauvegarder */}
                     <div className="flex justify-between">
                         <button
                             type="button"
                             onClick={handleReset}
                             className="bg-custom-violet1 hover:bg-custom-violet2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
-                            Réinitialiser
+                            Reset
                         </button>
                         <button
                             type="submit"
                             className="bg-custom-green hover:bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
-                            Sauvegarder
+                            Save
                         </button>
                     </div>
                 </form>

@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface LanguageOption {
     value: string;
     label: string;
@@ -15,7 +13,10 @@ interface SelectLanguageProps {
 
 export const SelectLanguage: React.FC<SelectLanguageProps> = ({ label, name, value, onChange, options }) => (
     <div>
+        {/* Label pour le select */}
         <label htmlFor={name} className="block text-sm font-bold mb-2">{label}</label>
+
+        {/* Liste déroulante des langages */}
         <select
             id={name}
             name={name}
@@ -24,6 +25,7 @@ export const SelectLanguage: React.FC<SelectLanguageProps> = ({ label, name, val
             onChange={onChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight text-gray-500 focus:outline-none focus:shadow-outline  border-custom-violet2"
         >
+            {/* Options dynamiques */}
             {options.map(option => (
                 <option key={option.value} value={option.value}>
                     {option.label}
@@ -32,4 +34,3 @@ export const SelectLanguage: React.FC<SelectLanguageProps> = ({ label, name, val
         </select>
     </div>
 );
-

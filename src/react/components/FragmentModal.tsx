@@ -20,10 +20,10 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
     language,
     onDelete,
 }) => {
-
     const codeRef = useRef<HTMLElement>(null);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
+    // Applique le thème clair ou sombre pour highlight.js
     const switchHighlightTheme = (theme: "light" | "dark") => {
         const existing = document.getElementById("hljs-theme") as HTMLLinkElement | null;
         const href = theme === "dark"
@@ -43,24 +43,22 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-
+            if (e.key === "Escape") onClose(); // Ferme le modal avec Échap
             if ((e.ctrlKey || e.metaKey) && e.key === "c") {
                 e.preventDefault();
-                handleCopy();
+                handleCopy(); // Copie le code avec Ctrl+C / Cmd+C
             }
         };
 
-
         if (isOpen) {
             document.addEventListener("keydown", handleKeyDown);
-            document.body.style.overflow = "hidden";
+            document.body.style.overflow = "hidden"; // Empêche le scroll en arrière-plan
 
             const isDark = document.documentElement.classList.contains("dark");
             switchHighlightTheme(isDark ? "dark" : "light");
 
             if (codeRef.current) {
-                hljs.highlightElement(codeRef.current);
+                hljs.highlightElement(codeRef.current); // Applique la coloration syntaxique
             }
         }
 
@@ -70,11 +68,9 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
         };
     }, [isOpen, onClose]);
 
-
     const handleCopy = () => {
         try {
             navigator.clipboard.writeText(code);
-            console.log(code)
             alert("Code copied!");
         } catch (err) {
             alert("Failed to copy code.");
@@ -96,12 +92,14 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
                     <X size={16} />
                 </button>
 
+                {/* Code avec coloration syntaxique */}
                 <pre className="overflow-auto max-h-[500px] text-sm bg-white dark:bg-custom-black p-4 rounded-md">
                     <code ref={codeRef} className={`language-${language}`}>
                         {code}
                     </code>
                 </pre>
 
+                {/* Actions : supprimer, éditer, copier */}
                 <div className="flex justify-between mt-4">
                     <div className="space-x-1">
                         <button
@@ -110,7 +108,10 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
                         >
                             <Trash2 />
                         </button>
-                        <button onClick={() => handleEdit(id)} className="bg-custom-violet1 hover:bg-custom-violet2 text-white py-1.5 px-4 rounded-full">
+                        <button
+                            onClick={() => handleEdit(id)}
+                            className="bg-custom-violet1 hover:bg-custom-violet2 text-white py-1.5 px-4 rounded-full"
+                        >
                             <PencilOff />
                         </button>
                     </div>
@@ -118,7 +119,7 @@ export const FragmentModal: React.FC<FragmentModalProps> = ({
                         onClick={handleCopy}
                         className="bg-custom-green hover:bg-green-500 text-white py-1.5 px-4 rounded-full"
                     >
-                        copier
+                        copy
                     </button>
                 </div>
             </div>

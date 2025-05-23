@@ -23,15 +23,14 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 }) => {
     const [isDarkMode, setIsDarkMode] = React.useState(false);
 
+    // Thème clair personnalisé
     const lightTheme = createTheme({
         theme: "light",
         settings: {
             background: "#ffffff",
-            backgroundImage: "",
             foreground: "#9955ff",
             caret: "#8841ff",
             selection: "#9955ff26",
-            selectionMatch: "#9955ff26",
             lineHighlight: "#f7f7f7",
             gutterBackground: "#ffffff",
             gutterForeground: "#808080",
@@ -40,29 +39,21 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             { tag: t.comment, color: "#808080" },
             { tag: t.variableName, color: "#5ec2b7" },
             { tag: [t.string, t.special(t.brace)], color: "#333333" },
-            { tag: t.number, color: "#333333" },
             { tag: t.bool, color: "#9955ff" },
-            { tag: t.null, color: "#9955ff" },
             { tag: t.keyword, color: "#8841ff" },
-            { tag: t.operator, color: "#333333" },
             { tag: t.className, color: "#5ec2b7" },
-            { tag: t.definition(t.typeName), color: "#5ec2b7" },
-            { tag: t.typeName, color: "#5ec2b7" },
-            { tag: t.angleBracket, color: "#808080" },
-            { tag: t.tagName, color: "#9955ff" },
             { tag: t.attributeName, color: "#8841ff" },
         ],
     });
 
+    // Thème sombre personnalisé
     const darkTheme = createTheme({
         theme: "dark",
         settings: {
             background: "#1a1a1a",
-            backgroundImage: "",
             foreground: "#bd93ff",
             caret: "#a67dff",
             selection: "#bd93ff40",
-            selectionMatch: "#bd93ff40",
             lineHighlight: "#282828",
             gutterBackground: "#1a1a1a",
             gutterForeground: "#e0e0e0",
@@ -71,23 +62,19 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             { tag: t.comment, color: "#a0a0a0" },
             { tag: t.variableName, color: "#6ddfcf" },
             { tag: [t.string, t.special(t.brace)], color: "#f8f8f8" },
-            { tag: t.number, color: "#f8f8f8" },
             { tag: t.bool, color: "#bd93ff" },
-            { tag: t.null, color: "#bd93ff" },
             { tag: t.keyword, color: "#a67dff" },
-            { tag: t.operator, color: "#f8f8f8" },
             { tag: t.className, color: "#6ddfcf" },
-            { tag: t.definition(t.typeName), color: "#6ddfcf" },
-            { tag: t.typeName, color: "#6ddfcf" },
-            { tag: t.angleBracket, color: "#a0a0a0" },
-            { tag: t.tagName, color: "#bd93ff" },
             { tag: t.attributeName, color: "#a67dff" },
         ],
     });
 
+    // Détecte le thème actuel (mode sombre ou clair)
     React.useEffect(() => {
         const isDark = document.documentElement.classList.contains("dark");
         setIsDarkMode(isDark);
+
+        // Observe les changements de thème (ex : via Tailwind ou système)
         const observer = new MutationObserver(() => {
             const dark = document.documentElement.classList.contains("dark");
             setIsDarkMode(dark);
@@ -96,6 +83,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         return () => observer.disconnect();
     }, []);
 
+    // Charge l'extension de langage selon le nom passé en props
     const languageExtension = loadLanguage(language);
 
     return (

@@ -3,10 +3,11 @@ import { useCustomTheme } from './ThemeProvider';
 import { Link } from 'react-router-dom';
 
 export const Navbar = () => {
-    const { theme, toggle } = useCustomTheme();
+    const { theme, toggle } = useCustomTheme(); // Récupère le thème actuel et la fonction de bascule
 
     return (
         <div className="flex items-center justify-between sticky top-0 p-4 border-b border-purple-500 bg-white text-black dark:bg-custom-black dark:text-white">
+            {/* Logo + Titre */}
             <div className='flex items-center'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="104" height="48" viewBox="0 0 52 24" fill="none" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="48" height="20" x="2" y="2" rx="2" stroke="#9A48D0" strokeWidth="2" />
@@ -20,18 +21,23 @@ export const Navbar = () => {
                 </svg>
                 <span className='text-2xl text-custom-violet2 font-black'>CodeWallet</span>
             </div>
+
+            {/* Navigation + bouton thème */}
             <div className="flex items-center space-x-6">
                 <Link to={"/"} className="hover:underline">fragment</Link>
                 <Link to={"/info"} className="hover:underline">info</Link>
+
+                {/* Bouton pour changer le thème clair/sombre */}
                 <button
                     onClick={toggle}
                     title="Toggle color scheme"
                     className="flex items-center justify-center w-10 h-10 rounded-full border border-custom-violet2"
                 >
-                    {theme === 'dark' ? <Sun size={20} className="text-custom-violet2" /> : <Moon size={20} className="text-custom-violet2" />}
+                    {theme === 'dark'
+                        ? <Sun size={20} className="text-custom-violet2" />
+                        : <Moon size={20} className="text-custom-violet2" />}
                 </button>
             </div>
         </div>
     );
 };
-
