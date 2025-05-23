@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -6,4 +8,8 @@
   --color-custom-violet1: #b288c0;
   --color-custom-violet2: #9a48d0;
   --color-custom-green: #7bc950;
+}
+
+:root {
+  font-family: "Montserrat", sans-serif;
 }
